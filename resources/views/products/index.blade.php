@@ -30,7 +30,7 @@
                         </tr>
                     </thead>
                     <tbody class="text-gray-600 text-sm font-light">
-                        @foreach ($products as $product)
+        @foreach ($products as $product)
                             <tr class="border-b border-gray-200 hover:bg-gray-100">
                                 <td class="py-3 px-6 text-left whitespace-nowrap">{{ $product->name }}</td>
                                 <td class="py-3 px-6 text-left">{{ $product->description }}</td>
@@ -65,7 +65,7 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+        @endforeach
                     </tbody>
                 </table>
             </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\OrderController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,3 +27,4 @@ Route::get('/payment/success', [PaymentController::class, 'success'])->name('pay
 
 Route::resource('products', ProductController::class);
 Route::resource('product-types', ProductTypeController::class);
+Route::resource('orders', OrderController::class);

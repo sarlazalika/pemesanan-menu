@@ -9,6 +9,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\TableController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -34,3 +35,5 @@ Route::resource('orders', OrderController::class);
 Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
 
 Route::resource('tables', TableController::class);
+
+Route::resource('users', UserController::class);

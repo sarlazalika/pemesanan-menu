@@ -3,56 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Produk</title>
+    <title>Daftar Jenis Produk</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 p-8">
     <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Daftar Produk</h1>
-            <a href="{{ route('products.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Tambah Produk Baru</a>
+            <h1 class="text-2xl font-bold text-gray-800">Daftar Jenis Produk</h1>
+            <a href="{{ route('product-types.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Tambah Jenis Produk Baru</a>
         </div>
 
-        @if ($products->isEmpty())
-            <p class="text-gray-600">Belum ada produk.</p>
+        @if (session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        @endif
+
+        @if ($productTypes->isEmpty())
+            <p class="text-gray-600">Belum ada jenis produk.</p>
         @else
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-white border border-gray-200">
                     <thead>
                         <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                            <th class="py-3 px-6 text-left">Nama</th>
-                            <th class="py-3 px-6 text-left">Deskripsi</th>
-                            <th class="py-3 px-6 text-left">Harga</th>
-                            <th class="py-3 px-6 text-left">Stok</th>
-                            <th class="py-3 px-6 text-left">Jenis Produk</th>
-                            <th class="py-3 px-6 text-center">Gambar</th>
+                            <th class="py-3 px-6 text-left">Nama Jenis Produk</th>
                             <th class="py-3 px-6 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-600 text-sm font-light">
-                        @foreach ($products as $product)
+                        @foreach ($productTypes as $productType)
                             <tr class="border-b border-gray-200 hover:bg-gray-100">
-                                <td class="py-3 px-6 text-left whitespace-nowrap">{{ $product->name }}</td>
-                                <td class="py-3 px-6 text-left">{{ $product->description }}</td>
-                                <td class="py-3 px-6 text-left">Rp{{ number_format($product->price, 2, ',', '.') }}</td>
-                                <td class="py-3 px-6 text-left">{{ $product->stock }}</td>
-                                <td class="py-3 px-6 text-left">{{ $product->productType ? $product->productType->name : 'N/A' }}</td>
-                                <td class="py-3 px-6 text-center">
-                                    @if ($product->image)
-                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-16 h-16 object-cover mx-auto">
-                                    @else
-                                        Tidak ada gambar
-                                    @endif
-                                </td>
+                                <td class="py-3 px-6 text-left whitespace-nowrap">{{ $productType->name }}</td>
                                 <td class="py-3 px-6 text-center">
                                     <div class="flex item-center justify-center">
-                                        <a href="{{ route('products.edit', $product->id) }}" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                                        <a href="{{ route('product-types.edit', $productType->id) }}" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
                                             <!-- Icon Edit -->
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                             </svg>
                                         </a>
-                                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');">
+                                        <form action="{{ route('product-types.destroy', $productType->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus jenis produk ini? Semua produk yang terkait akan diatur ke NULL.');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
@@ -72,4 +62,4 @@
         @endif
     </div>
 </body>
-</html>
+</html> 

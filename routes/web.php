@@ -8,6 +8,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\TableController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -31,3 +32,5 @@ Route::resource('product-types', ProductTypeController::class);
 Route::resource('orders', OrderController::class);
 
 Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
+
+Route::resource('tables', TableController::class);

@@ -3,69 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pembayaran</title>
+    <title>Payments</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 p-8">
-    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h1 class="text-2xl font-bold text-gray-800 mb-6">Konfirmasi Pesanan & Pembayaran</h1>
+    <div class="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Payments</h1>
+            <a href="#" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">New Payment</a>
+        </div>
 
-        @if (session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <span class="block sm:inline">{{ session('error') }}</span>
+        @if (session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
             </div>
         @endif
 
-        <div class="mb-6">
-            <h2 class="text-xl font-semibold text-gray-700 mb-3">Ringkasan Pesanan</h2>
+        @if ($payments->isEmpty())
+            <p class="text-gray-600">No payments found.</p>
+        @else
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-white border border-gray-200">
                     <thead>
                         <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                            <th class="py-3 px-6 text-left">Produk</th>
-                            <th class="py-3 px-6 text-center">Jumlah</th>
-                            <th class="py-3 px-6 text-right">Harga</th>
-                            <th class="py-3 px-6 text-right">Subtotal</th>
+                            <th class="py-3 px-4 text-left">No</th>
+                            <th class="py-3 px-4 text-left">Invoice</th>
+                            <th class="py-3 px-4 text-left">Method</th>
+                            <th class="py-3 px-4 text-left">Code</th>
+                            <th class="py-3 px-4 text-left">User</th>
+                            <th class="py-3 px-4 text-right">Subtotal</th>
+                            <th class="py-3 px-4 text-center">Status</th>
+                            <th class="py-3 px-4 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-600 text-sm font-light">
-                        @foreach ($cart as $id => $item)
+                        @foreach ($payments as $i => $payment)
                             <tr class="border-b border-gray-200 hover:bg-gray-100">
-                                <td class="py-3 px-6 text-left">{{ $item['name'] }}</td>
-                                <td class="py-3 px-6 text-center">{{ $item['quantity'] }}</td>
-                                <td class="py-3 px-6 text-right">Rp{{ number_format($item['price'], 2, ',', '.') }}</td>
-                                <td class="py-3 px-6 text-right">Rp{{ number_format($item['price'] * $item['quantity'], 2, ',', '.') }}</td>
+                                <td class="py-3 px-4 text-left">{{ $i + 1 }}</td>
+                                <td class="py-3 px-4 text-left">{{ $payment->invoice }}</td>
+                                <td class="py-3 px-4 text-left">{{ $payment->method }}</td>
+                                <td class="py-3 px-4 text-left">{{ $payment->code }}</td>
+                                <td class="py-3 px-4 text-left">{{ $payment->user->name ?? '-' }}</td>
+                                <td class="py-3 px-4 text-right">Rp{{ number_format($payment->subtotal, 0, ',', '.') }}</td>
+                                <td class="py-3 px-4 text-center">
+                                    @if ($payment->status === 'Verified')
+                                        <span class="inline-block px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">Verified</span>
+                                    @elseif ($payment->status === 'Pending')
+                                        <span class="inline-block px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-700 rounded-full">Pending</span>
+                                    @else
+                                        <span class="inline-block px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-700 rounded-full">{{ $payment->status }}</span>
+                                    @endif
+                                </td>
+                                <td class="py-3 px-4 text-center">
+                                    <a href="#" class="text-orange-600 hover:underline font-semibold">View</a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
-                    <tfoot>
-                        <tr class="bg-gray-100 font-bold">
-                            <td colspan="3" class="py-3 px-6 text-right text-lg">Total Pembayaran:</td>
-                            <td class="py-3 px-6 text-right text-lg">Rp{{ number_format($total, 2, ',', '.') }}</td>
-                        </tr>
-                    </tfoot>
                 </table>
             </div>
-        </div>
-
-        <h2 class="text-xl font-semibold text-gray-700 mb-3">Metode Pembayaran</h2>
-        <form action="{{ route('payment.process') }}" method="POST">
-            @csrf
-            <div class="mb-4">
-                <label for="payment_method" class="block text-gray-700 text-sm font-bold mb-2">Pilih Metode Pembayaran:</label>
-                <select name="payment_method" id="payment_method" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                    <option value="">Pilih...</option>
-                    <option value="credit_card">Kartu Kredit</option>
-                    <option value="transfer">Transfer Bank</option>
-                    <option value="ewallet">E-Wallet</option>
-                    <option value="cash">Tunai (Bayar di Tempat)</option>
-                </select>
-            </div>
-            <div class="flex items-center justify-between">
-                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Bayar Sekarang</button>
-                <a href="{{ route('cart.index') }}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">Kembali ke Keranjang</a>
-            </div>
-        </form>
+        @endif
     </div>
 </body>
 </html> 
